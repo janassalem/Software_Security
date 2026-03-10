@@ -1,3 +1,5 @@
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.Scanner;
 
 public class Main {
@@ -73,14 +75,38 @@ public class Main {
             long plaintext = Long.parseUnsignedLong(plaintextInput, 16);
             long key = Long.parseUnsignedLong(keyInput, 16);
 
+
+            PrintStream originalOut = System.out;
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PrintStream captureStream = new PrintStream(baos);
+            System.setOut(captureStream);
+
             long output;
-
-            if (mode == 1)
+            if (mode == 1) {
                 output = DES.encrypt(plaintext, key);
-            else
-                output = DES.decrypt(plaintext, key);
 
-            result = String.format("%016X", output);
+
+                long decrypted = DES.decrypt(output, key);
+                System.out.println("\n══════════════════════════════");
+                System.out.println("    FINAL VERIFICATION");
+                System.out.println("══════════════════════════════");
+                System.out.printf("Original  : %016X%n", plaintext);
+                System.out.printf("Encrypted : %016X%n", output);
+                System.out.printf("Decrypted : %016X%n", decrypted);
+                System.out.println("Match: " + (plaintext == decrypted ? "✓ YES" : "✗ NO"));
+            } else {
+                output = DES.decrypt(plaintext, key);
+            }
+
+
+            System.out.flush();
+            System.setOut(originalOut);
+
+
+            result = baos.toString();
+
+
+            System.out.print(result);
         }
 
         FileManager.writeFile(outputFile, result);
