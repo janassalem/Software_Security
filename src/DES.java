@@ -1,3 +1,4 @@
+import java.util.Scanner;
 public class DES {
 
     private static final int[] IP = {
@@ -345,8 +346,17 @@ public class DES {
     // ══════════════════════════════════════════════════════
     public static void main(String[] args) {
 
-        long plaintext  = 0x0123456789ABCDEFL;
-        long key        = 0x133457799BBCDFF1L;
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter 64-bit plaintext in HEX (example: 0123456789ABCDEF): ");
+        String plaintextInput = scanner.nextLine();
+
+        System.out.println("Enter 64-bit key in HEX (example: 133457799BBCDFF1): ");
+        String keyInput = scanner.nextLine();
+
+        // Convert HEX string to long
+        long plaintext = Long.parseUnsignedLong(plaintextInput, 16);
+        long key = Long.parseUnsignedLong(keyInput, 16);
 
         long ciphertext = encrypt(plaintext, key);
         long decrypted  = decrypt(ciphertext, key);
@@ -358,5 +368,8 @@ public class DES {
         System.out.printf("Encrypted : %016X%n", ciphertext);
         System.out.printf("Decrypted : %016X%n", decrypted);
         System.out.println("Match: " + (plaintext == decrypted ? "✓ YES" : "✗ NO"));
+
+        scanner.close();
     }
+
 }
